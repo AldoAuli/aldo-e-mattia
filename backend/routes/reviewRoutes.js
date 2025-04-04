@@ -40,10 +40,7 @@ router.post('/', upload.single('immagine'), (req, res) => {
 // Ottieni recensioni per un ristorante
 router.get('/:ristorante_id', (req, res) => {
     db.query(
-        `SELECT recensioni.*, utenti.nome AS utente_nome 
-         FROM recensioni 
-         JOIN utenti ON recensioni.utente_id = utenti.id 
-         WHERE ristorante_id = ?`,
+        `SELECT * FROM recensioni WHERE ristorante_id = ?`,
         [req.params.ristorante_id],
         (err, results) => {
             if (err) return res.status(500).json({ error: err.message });
