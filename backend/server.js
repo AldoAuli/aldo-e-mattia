@@ -10,13 +10,15 @@ require('./db');
 
 const app = express();
 
-// Abilita CORS per permettere richieste da frontend
+// ✅ Middleware per JSON e form data (va PRIMA delle rotte!)
 app.use(cors());
-app.use('/api/reviews', reviewRoutes); // Aggiungi la tua route per le recensioni
-
-// Middleware per gestire JSON e URL-encoded data
-app.use(express.json());
+app.use(express.json()); // <-- QUI
 app.use(express.urlencoded({ extended: true }));
+
+// ✅ Rotte API (dopo i middleware di parsing)
+app.use('/api/auth', authRoutes);
+app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Configurazione Multer per upload immagini recensioni
 const storage = multer.diskStorage({
@@ -27,20 +29,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Servire immagini statiche
-app.use('/uploads', express.static('uploads'));
-
-// Rotte API
-app.use('/api/auth', authRoutes);
-app.use('/api/restaurants', restaurantRoutes);
-
-// Rotta per caricare immagini (collegata a reviewRoutes)
+// Upload immagini
 app.post('/api/upload', upload.single('immagine'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'Nessun file caricato' });
     res.json({ imageUrl: `/uploads/${req.file.filename}` });
 });
 
-// Middleware per gestire errori globali
+// Servire immagini statiche
+app.use('/uploads', express.static('uploads'));
+
+// Middleware per gestione errori
 app.use((err, req, res, next) => {
     console.error('Errore:', err);
     res.status(500).json({ error: 'Errore interno del server' });
