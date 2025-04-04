@@ -49,7 +49,6 @@ document.getElementById('register-form')?.addEventListener('submit', async (e) =
 
         // Se la registrazione è andata a buon fine, salva il token e reindirizza
         if (res.ok) {
-            const data = await res.json();
             localStorage.setItem('token', data.token);  // Salvataggio del token nel localStorage
             window.location.href = 'reviews.html'; // Reindirizzamento alla pagina recensioni
         } else {
