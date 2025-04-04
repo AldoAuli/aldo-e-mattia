@@ -10,7 +10,10 @@ router.post('/register', async (req, res) => {
     db.query('INSERT INTO utenti (nome, email, password, ruolo) VALUES (?, ?, ?, ?)', 
         [nome, email, hashedPassword, ruolo], 
         (err) => {
-            if (err) return res.status(500).send(err);
+            if (err) {
+                console.error('Errore MySQL:', err); // LOG COMPLETO
+                return res.status(500).json({ message: 'Errore durante la registrazione', error: err.message });
+            }
             res.send({ message: 'Utente registrato!' });
         });
 });
